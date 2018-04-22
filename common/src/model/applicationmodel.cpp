@@ -20,10 +20,20 @@ ApplicationModel::ApplicationModel(QObject* parent) : QObject(parent)
   m_isValid =   false;
 }
 
-bool ApplicationModel::loadFromFile(const QString& file)
+void ApplicationModel::saveLabyrinthData() {
+    if (labyrinthData.id.isNull()) return;
+
+    QString id = labyrinthData.id;
+    cachedLabyrinthData[id] = labyrinthData;
+    cachedPlanData[id] = planData;
+    cachedNavigationData[id] = navigationData;
+}
+
+bool ApplicationModel::loadFromString(const QString& json)
 {
   LabyrinthData newLabyrinthData;
-  if (newLabyrinthData.loadFromFile(file)) {
+  if (newLabyrinthData.loadFromString(json.toUtf8())) {
+    saveLabyrinthData();
     labyrinthData = newLabyrinthData;
     update_labMapOutdated(labyrinthData.date != QDateTime::currentDateTimeUtc().date());
     updatePlanData(PlanData());
@@ -31,9 +41,24 @@ bool ApplicationModel::loadFromFile(const QString& file)
     update_inLab(false);
     update_isValid(true);
     resetModels();
+
     return true;
   }
   return false;
+}
+
+bool ApplicationModel::loadFromCache(const QString& id) {
+  if (id == labyrinthData.id) return false;
+  saveLabyrinthData();
+  update_labMapOutdated(labyrinthData.date != QDateTime::currentDateTimeUtc().date());
+  labyrinthData = cachedLabyrinthData[id];
+  planData = cachedPlanData[id];
+  navigationData = cachedNavigationData[id];
+
+  update_inLab(false);
+  update_isValid(true);
+  resetModels();
+  return true;
 }
 
 void ApplicationModel::updatePlanData(const PlanData& planData)

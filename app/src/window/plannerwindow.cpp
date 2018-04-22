@@ -5,19 +5,24 @@ PlannerWindow::PlannerWindow(QQmlEngine* engine) : Window(engine, false)
 {
   setSource(QUrl("qrc:/ui/planner/Planner.qml"));
 
+  qnam = new QNetworkAccessManager();
+  req = new QNetworkRequest();
+  QObject::connect(qnam, SIGNAL(finished(QNetworkReply*)),
+          this, SLOT(onRequestFinished(QNetworkReply*)));
+
   connect(rootObject(), SIGNAL(drag(int, int)),
           this, SLOT(onDrag(int, int)));
   connect(global(), SIGNAL(plannerWindowOpenChanged()),
           this, SLOT(onWindowOpenChanged()));
-  connect(rootObject(), SIGNAL(importLabNotesButtonClicked()),
-          this, SLOT(onImportLabNotesFileClicked()));
-  connect(rootObject(), SIGNAL(importLabNotesFromUrl(QUrl)),
-          this, SLOT(onImportLabNotesFromUrl(QUrl)));
+  connect(rootObject(), SIGNAL(importLabNotesButtonClicked(QString)),
+          this, SLOT(onImportLabNotesButtonClicked(QString)));
   connect(rootObject(), SIGNAL(openUrl(QString)),
           this, SLOT(onOpenUrl(QString)));
 
   connect(rootObject()->findChild<QObject*>("labyrinthMapDisplay"), SIGNAL(setRoomIsTarget(QString, bool)),
           this, SIGNAL(setRoomIsTarget(QString, bool)));
+    connect(rootObject()->findChild<QObject*>("labyrinthMapDisplay"), SIGNAL(setBlockedPath(QString, QString)),
+          this, SIGNAL(setBlockedPath(QString,QString)));
   connect(rootObject()->findChild<QObject*>("labyrinthMapDisplay"), SIGNAL(setCurrentRoom(QString)),
           this, SIGNAL(setCurrentRoom(QString)));
 }
@@ -28,22 +33,26 @@ void PlannerWindow::onWindowOpenChanged()
   setVisible(open);
 }
 
-void PlannerWindow::onImportLabNotesFileClicked()
+void PlannerWindow::onImportLabNotesButtonClicked(const QString &labType)
 {
-  Settings* settings = global()->property("model").value<QObject*>()->property("settings").value<Settings*>();
-  auto importDirectory = settings->value("importDirectory").toString();
-  if (importDirectory.isEmpty()) {
-    auto downloadLocations = QStandardPaths::standardLocations(QStandardPaths::DownloadLocation);
-    if (!downloadLocations.isEmpty())
-      importDirectory = downloadLocations[0];
+  QString id = labType + "-" + QDate::currentDate().toString("yyyy-MM-dd");
+  if (labs.contains(id)) {
+    emit importID(id);
+  } else {
+    QUrl labUrl("https://www.poelab.com/wp-content/labfiles/" + id + ".json");
+    labUrl.setQuery(id);
+    req->setUrl(labUrl);
+    qnam->get(*req);
   }
+}
 
-  auto fileName = QFileDialog::getOpenFileName(nullptr, "Import Lab Notes",
-                                               importDirectory,
-                                               "Lab Maps (*.json *.map)");
-  if (!fileName.isEmpty()) {
-    importLabNotesFromFile(fileName);
+void PlannerWindow::onRequestFinished(QNetworkReply *reply) {
+  if (reply->error()) {
+    return;
   }
+  QString id = reply->request().url().query();
+  labs.insert(id);
+  emit importString(reply->readAll());
 }
 
 void PlannerWindow::onImportLabNotesFromUrl(const QUrl& url)

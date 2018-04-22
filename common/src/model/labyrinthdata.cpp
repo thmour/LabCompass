@@ -46,8 +46,10 @@ bool LabyrinthData::loadFromJson(const QJsonObject& json)
     if (!json.contains(property))
       return false;
 
+  QString dateFormat = "yyyy-MM-dd";
   difficulty = json["difficulty"].toString();
-  date = QDate::fromString(json["date"].toString(), "yyyy-MM-dd");
+  date = QDate::fromString(json["date"].toString(), dateFormat);
+  id = difficulty.toLower() + "-" + date.toString(dateFormat);
 
   weapon = json["weapon"].toString();
   sectionMechanics[0] = json["phase1"].toString();

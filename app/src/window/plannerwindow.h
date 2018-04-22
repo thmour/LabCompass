@@ -10,7 +10,9 @@ class PlannerWindow : public Window
 
 signals:
   void moved(int x, int y);
-  void importFile(QString fileName);
+  void importID(QString id);
+  void importString(QString json);
+  void setBlockedPath(QString fromRoom, QString toRoom);
   void setRoomIsTarget(QString id, bool target);
   void setCurrentRoom(QString id);
 
@@ -19,12 +21,15 @@ public:
 
 private slots:
   void onWindowOpenChanged();
-  void onImportLabNotesFileClicked();
-  void onImportLabNotesFromUrl(const QUrl& url);
+  void onRequestFinished(QNetworkReply* reply);
+  void onImportLabNotesButtonClicked(const QString& labType);
   void onOpenUrl(const QString& url);
   void onDrag(int dx, int dy);
+
 private:
-  void importLabNotesFromFile(const QString& file);
+  QNetworkAccessManager* qnam;
+  QNetworkRequest* req;
+  QSet<QString> labs;
 };
 
 #endif // PLANNERWINDOW_H

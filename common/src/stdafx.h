@@ -2,6 +2,7 @@
 #define STDAFX_H
 
 #include <QtCore>
+#include <QDate>
 #include <QtGui>
 #include <QtNetwork>
 #include <QtWidgets>
