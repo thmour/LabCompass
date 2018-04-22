@@ -55,12 +55,6 @@ void PlannerWindow::onRequestFinished(QNetworkReply *reply) {
   emit importString(reply->readAll());
 }
 
-void PlannerWindow::onImportLabNotesFromUrl(const QUrl& url)
-{
-  if (url.isLocalFile())
-    importLabNotesFromFile(url.toLocalFile());
-}
-
 void PlannerWindow::onOpenUrl(const QString& url)
 {
   global()->setProperty("plannerWindowOpen", false);
