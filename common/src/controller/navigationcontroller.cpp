@@ -123,6 +123,33 @@ void NavigationController::onPortalSpawned()
   model->updateNavigationData(data);
 }
 
+void NavigationController::onBlockedPath(QString fromRoom, QString toRoom)
+{
+  if (!model->get_isValid()) {
+    return;
+  }
+
+  auto& bp = model->labyrinthData.blockedPaths;
+  if (bp[fromRoom].contains(toRoom)) {
+    bp[fromRoom].removeAt(bp[fromRoom].indexOf(toRoom));
+  } else {
+    auto con = model->labyrinthData.connections[fromRoom];
+    int n = std::count_if(con.begin(), con.end(), [](auto cc) {
+        return cc.size() > 0;
+    });
+    if (n > bp[fromRoom].size() + 1) //always leave one route
+        bp[fromRoom].append(toRoom);
+  }
+
+  if (model->get_inLab()) {
+    NavigationData data = model->navigationData;
+    data.updatePlannedRouteAndInstructions();
+    model->updateNavigationData(data);
+  } else {
+    model->updatePlanData(model->planData);
+  }
+}
+
 void NavigationController::onRoomIsTargetSet(const QString& id, bool isTarget)
 {
   if (!model->get_isValid())
