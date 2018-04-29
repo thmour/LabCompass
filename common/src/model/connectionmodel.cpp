@@ -54,9 +54,10 @@ void ConnectionModel::updateFromData(const NavigationData& data)
   emit dataChanged(index(0), index(rowCount() - 1), {IsPlannedRole});
 }
 
-void ConnectionModel::toggleBlocked(int i)
+void ConnectionModel::updateBlocked(int i, bool blocked)
 {
-  d[i].isBlocked = !d[i].isBlocked;
+  d[i].isBlocked = blocked;
+
   emit dataChanged(index(i), index(i), {IsBlockedRole});
 }
 
