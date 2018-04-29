@@ -23,6 +23,9 @@ public slots:
   void onBlockedPath(QString fromRoom, QString toRoom);
   void onRoomIsTargetSet(const QString& id, bool isTarget);
   void onRoomIdSet(const QString& id);
+
+private:
+  bool dfs(const QString&, const QString&, QHash<QString, bool>&, QString);
 };
 
 #endif // NAVIGATIONCONTROLLER_H

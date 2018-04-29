@@ -131,6 +131,35 @@ void NavigationController::onPortalSpawned()
   model->updateNavigationData(data);
 }
 
+bool NavigationController::dfs(const QString& currRoom,
+                               const QString& targetRoom,
+                               QHash<QString, bool>& visited,
+                               QString indent = "|") {
+  auto& ld = model->labyrinthData;
+  auto& con = ld.connections;
+  auto& bp = ld.blockedPaths;
+  if (currRoom == targetRoom) {
+    std::cout << currRoom.toStdString() << std::endl;
+    return true;
+  } else {
+    bool found = false;
+
+    visited[currRoom] = true;
+    std::cout << currRoom.toStdString() << ':' << std::endl;
+    for (auto it = con.begin(); !found && it != con.end(); ++it) {
+      auto next_room = it.key();
+      if (!visited[next_room]                   &&
+          ld.hasConnection(currRoom, next_room) &&
+          !bp[currRoom].contains(next_room)) {
+        std::cout << indent.toStdString();
+        found = dfs(next_room, targetRoom, visited, indent + '|');
+      }
+    }
+
+    return found;
+  }
+}
+
 void NavigationController::onBlockedPath(QString fromRoom, QString toRoom)
 {
   if (!model->get_isValid()) {
@@ -140,13 +169,23 @@ void NavigationController::onBlockedPath(QString fromRoom, QString toRoom)
   auto& bp = model->labyrinthData.blockedPaths;
   if (bp[fromRoom].contains(toRoom)) {
     bp[fromRoom].removeAt(bp[fromRoom].indexOf(toRoom));
+    bp[toRoom].removeAt(bp[toRoom].indexOf(fromRoom));
   } else {
-    auto con = model->labyrinthData.connections[fromRoom];
-    int n = std::count_if(con.begin(), con.end(), [](auto cc) {
-        return cc.size() > 0;
+    QList<QString> rooms = model->labyrinthData.connections.keys();
+    QString endRoom = *std::max_element(rooms.begin(), rooms.end(), [](auto a, auto b) {
+      return a.toInt() < b.toInt();
     });
-    if (n > bp[fromRoom].size() + 1) //always leave one route
-        bp[fromRoom].append(toRoom);
+    QHash<QString, bool> visited;
+    for(auto& room : rooms) {
+        visited[room] = false;
+    }
+    bp[fromRoom].append(toRoom);
+    bp[toRoom].append(fromRoom);
+    if (!dfs(fromRoom, endRoom, visited)) {
+      bp[fromRoom].removeAt(bp[fromRoom].indexOf(toRoom));
+      bp[toRoom].removeAt(bp[toRoom].indexOf(fromRoom));
+    }
+    std::cout << "done" << std::endl;
   }
 
   if (model->get_inLab()) {

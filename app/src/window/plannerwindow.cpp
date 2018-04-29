@@ -72,11 +72,3 @@ void PlannerWindow::onDrag(int dx, int dy)
   move(x() + dx, y() + dy);
   emit moved(x(), y());
 }
-
-void PlannerWindow::importLabNotesFromFile(const QString& file)
-{
-  Settings* settings = global()->property("model").value<QObject*>()->property("settings").value<Settings*>();
-  auto directory = QFileInfo(file).absoluteDir().absolutePath();
-  settings->set_importDirectory(directory);
-  emit importFile(file);
-}

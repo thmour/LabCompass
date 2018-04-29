@@ -83,7 +83,6 @@ Rectangle {
           var y1 = connection.fromCoordinate.y;
           var y2 = connection.toCoordinate.y;
           if(pDistance(mouseX, mouseY, x1, y1, x2, y2) < 5) {
-            connectionModel.toggleBlocked(i);
             setBlockedPath(connection.fromRoom, connection.toRoom);
             break;
           }
