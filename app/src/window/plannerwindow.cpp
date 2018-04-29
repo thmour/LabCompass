@@ -55,10 +55,13 @@ void PlannerWindow::onRequestFinished(QNetworkReply *reply) {
   emit importString(reply->readAll());
 }
 
-void PlannerWindow::onImportLabNotesFromUrl(const QUrl& url)
-{
-  if (url.isLocalFile())
-    importLabNotesFromFile(url.toLocalFile());
+void PlannerWindow::onRequestFinished(QNetworkReply *reply) {
+  if (reply->error()) {
+    return;
+  }
+  QString id = reply->request().url().query();
+  labs.insert(id);
+  emit importString(reply->readAll());
 }
 
 void PlannerWindow::onOpenUrl(const QString& url)
