@@ -12,6 +12,7 @@
 #include <QtDebug>
 #include <memory>
 #include <algorithm>
+#include <iostream>
 #include <queue>
 #include "qtsupermacros.h"
 

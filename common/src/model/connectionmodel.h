@@ -38,7 +38,7 @@ public:
   void updateFromData(const NavigationData& data);
   int rowCount(const QModelIndex& parent = QModelIndex()) const;
   QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const;
-  Q_INVOKABLE void toggleBlocked(int i);
+  void updateBlocked(int i, bool blocked);
 
 protected:
   QHash<int, QByteArray> roleNames() const;

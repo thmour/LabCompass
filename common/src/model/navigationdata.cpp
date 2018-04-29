@@ -106,7 +106,7 @@ QStringList NavigationData::plannedRouteInsideSection(int section, const QString
           return newState.history;
         }
 
-        if(sectionTargetRooms.contains(roomId))
+        if(sectionTargetRooms.contains(roomId) && state.history.last() != roomId)
           queue.push(newState);
         else {
           bool hasTargetConnection = false;
