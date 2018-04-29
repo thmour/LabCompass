@@ -24,6 +24,7 @@ struct LabyrinthData
   };
   using Matrix = QHash<QString, QHash<QString, QList<QString>>>;
 
+  QString id;
   QString difficulty;
   QDate date;
 
@@ -37,6 +38,7 @@ struct LabyrinthData
   QList<std::pair<QString, QString>> goldenDoors;
 
   QHash<QString, int> roomIdIndex;
+  QHash<QString, QStringList> blockedPaths;
 
 public:
   LabyrinthData();

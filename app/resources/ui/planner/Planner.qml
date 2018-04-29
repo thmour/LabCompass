@@ -10,8 +10,7 @@ WindowWithShadow {
   property var labyrinthModel: Global.model.labyrinthModel
 
   signal drag(int dx, int dy)
-  signal importLabNotesButtonClicked
-  signal importLabNotesFromUrl(url url)
+  signal importLabNotesButtonClicked(string labType)
   signal openUrl(string url)
 
   Column {
@@ -28,14 +27,15 @@ WindowWithShadow {
       Item { RotationAnimation on rotation { loops: Animation.Infinite; from: 0; to: 360 }}
 
       Grid {
-        columns: 5
-        leftPadding: 20
+        columns: 6
+        rightPadding: 10
+        leftPadding: 10
         spacing: 20
         anchors.verticalCenter: parent.verticalCenter
         verticalItemAlignment: Grid.AlignVCenter
 
         DragMoveArea {
-          width: 350
+          width: 320
           height: 80
           onDrag: window.drag(dx, dy)
 
@@ -48,7 +48,7 @@ WindowWithShadow {
         }
 
         Item {
-          width: 400
+          width: 240
           height: 30
           Text {
             anchors.centerIn: parent
@@ -58,23 +58,9 @@ WindowWithShadow {
         }
 
         MaterialInk {
-          width: 120
+          width: 100
           height: 30
-          onClicked: openUrl('http://www.poelab.com')
-          Text {
-            anchors.centerIn: parent
-            text: 'Get Maps'
-            color: Global.primaryTextColor
-          }
-          NotificationIndicator {
-            visible: Global.model.labMapOutdated
-          }
-        }
-
-        MaterialInk {
-          width: 120
-          height: 30
-          onClicked: importLabNotesButtonClicked()
+          onClicked: importLabNotesButtonClicked("normal")
           Rectangle {
             anchors.fill: parent
             color: '#2196F3'
@@ -82,7 +68,58 @@ WindowWithShadow {
             z: -1
             Text {
               anchors.centerIn: parent
-              text: 'Import Maps'
+              text: 'Normal'
+              color: Global.primaryTextColor
+            }
+          }
+        }
+
+        MaterialInk {
+          width: 100
+          height: 30
+          onClicked: importLabNotesButtonClicked("cruel")
+          Rectangle {
+            anchors.fill: parent
+            color: '#2196F3'
+            radius: 2
+            z: -1
+            Text {
+              anchors.centerIn: parent
+              text: 'Cruel'
+              color: Global.primaryTextColor
+            }
+          }
+        }
+
+        MaterialInk {
+          width: 100
+          height: 30
+          onClicked: importLabNotesButtonClicked("merciless")
+          Rectangle {
+            anchors.fill: parent
+            color: '#2196F3'
+            radius: 2
+            z: -1
+            Text {
+              anchors.centerIn: parent
+              text: 'Merciless'
+              color: Global.primaryTextColor
+            }
+          }
+        }
+
+        MaterialInk {
+          width: 100
+          height: 30
+          onClicked: importLabNotesButtonClicked("uber")
+          Rectangle {
+            anchors.fill: parent
+            color: '#2196F3'
+            radius: 2
+            z: -1
+            Text {
+              anchors.centerIn: parent
+              text: 'Uber'
               color: Global.primaryTextColor
             }
           }

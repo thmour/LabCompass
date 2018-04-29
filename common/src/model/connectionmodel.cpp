@@ -54,6 +54,12 @@ void ConnectionModel::updateFromData(const NavigationData& data)
   emit dataChanged(index(0), index(rowCount() - 1), {IsPlannedRole});
 }
 
+void ConnectionModel::toggleBlocked(int i)
+{
+  d[i].isBlocked = !d[i].isBlocked;
+  emit dataChanged(index(i), index(i), {IsBlockedRole});
+}
+
 int ConnectionModel::rowCount(const QModelIndex& parent) const
 {
   Q_UNUSED(parent)
@@ -75,6 +81,12 @@ QVariant ConnectionModel::data(const QModelIndex& index, int role) const
     return data.isSecretPassage;
   case IsPlannedRole:
     return data.isPlanned;
+  case ToRoomRole:
+    return data.toRoom;
+  case FromRoomRole:
+    return data.fromRoom;
+  case IsBlockedRole:
+    return data.isBlocked;
   default:
     return QVariant();
   }
@@ -87,5 +99,8 @@ QHash<int, QByteArray> ConnectionModel::roleNames() const
   roles[ToCoordinateRole] = "toCoordinate";
   roles[IsSecretPassgeRole] = "isSecretPassage";
   roles[IsPlannedRole] = "isPlanned";
+  roles[FromRoomRole] = "fromRoom";
+  roles[ToRoomRole] = "toRoom";
+  roles[IsBlockedRole] = "isBlocked";
   return roles;
 }

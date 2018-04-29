@@ -14,7 +14,8 @@ public:
   LabyrinthController(ApplicationModel* model);
 
 public slots:
-  void importFile(const QString& file);
+  void importID(const QString& id);
+  void importString(const QString& json);
 };
 
 #endif // LABYRINTHCONTROLLER_H
