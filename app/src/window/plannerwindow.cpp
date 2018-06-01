@@ -21,8 +21,8 @@ PlannerWindow::PlannerWindow(QQmlEngine* engine) : Window(engine, false)
 
   connect(rootObject()->findChild<QObject*>("labyrinthMapDisplay"), SIGNAL(setRoomIsTarget(QString, bool)),
           this, SIGNAL(setRoomIsTarget(QString, bool)));
-    connect(rootObject()->findChild<QObject*>("labyrinthMapDisplay"), SIGNAL(setBlockedPath(QString, QString)),
-          this, SIGNAL(setBlockedPath(QString,QString)));
+  connect(rootObject()->findChild<QObject*>("labyrinthMapDisplay"), SIGNAL(setBlockedPath(QString, QString, int)),
+          this, SIGNAL(setBlockedPath(QString, QString, int)));
   connect(rootObject()->findChild<QObject*>("labyrinthMapDisplay"), SIGNAL(setCurrentRoom(QString)),
           this, SIGNAL(setCurrentRoom(QString)));
 }
@@ -44,15 +44,6 @@ void PlannerWindow::onImportLabNotesButtonClicked(const QString &labType)
     req->setUrl(labUrl);
     qnam->get(*req);
   }
-}
-
-void PlannerWindow::onRequestFinished(QNetworkReply *reply) {
-  if (reply->error()) {
-    return;
-  }
-  QString id = reply->request().url().query();
-  labs.insert(id);
-  emit importString(reply->readAll());
 }
 
 void PlannerWindow::onRequestFinished(QNetworkReply *reply) {

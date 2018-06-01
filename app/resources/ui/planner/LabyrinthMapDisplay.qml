@@ -8,7 +8,7 @@ Rectangle {
 
   signal setRoomIsTarget(string id, bool target)
   signal setCurrentRoom(string id)
-  signal setBlockedPath(string fromRoom, string toRoom)
+  signal setBlockedPath(string fromRoom, string toRoom, int conId)
 
   property var roomModel
   property var connectionModel
@@ -83,7 +83,7 @@ Rectangle {
           var y1 = connection.fromCoordinate.y;
           var y2 = connection.toCoordinate.y;
           if(pDistance(mouseX, mouseY, x1, y1, x2, y2) < 5) {
-            setBlockedPath(connection.fromRoom, connection.toRoom);
+            setBlockedPath(connection.fromRoom, connection.toRoom, i);
             break;
           }
         }
