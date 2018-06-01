@@ -41,9 +41,17 @@ public:
   PlanData planData;
   NavigationData navigationData;
 
+  QMap<QString, PlanData> cachedPlanData;
+  QMap<QString, LabyrinthData> cachedLabyrinthData;
+  QMap<QString, NavigationData> cachedNavigationData;
+
+private:
+  void saveLabyrinthData();
+
 public:
   ApplicationModel(QObject* parent = nullptr);
-  bool loadFromFile(const QString& file);
+  bool loadFromCache(const QString& id);
+  bool loadFromString(const QString& json);
   void updatePlanData(const PlanData& planData);
   void updateNavigationData(const NavigationData& navigationData);
   void resetModels();

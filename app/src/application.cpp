@@ -113,8 +113,10 @@ void Application::initWorkers()
 void Application::initControllers()
 {
   labyrinthController.reset(new LabyrinthController(&model));
-  connect(plannerWindow.get(), &PlannerWindow::importFile,
-          labyrinthController.get(), &LabyrinthController::importFile);
+  connect(plannerWindow.get(), &PlannerWindow::importString,
+          labyrinthController.get(), &LabyrinthController::importString);
+  connect(plannerWindow.get(), &PlannerWindow::importID,
+          labyrinthController.get(), &LabyrinthController::importID);
 
   navigationController.reset(new NavigationController(&model));
   connect(logWatcher.get(), &LogWatcher::plazaEntered,
@@ -132,6 +134,8 @@ void Application::initControllers()
 
   connect(plannerWindow.get(), &PlannerWindow::setRoomIsTarget,
           navigationController.get(), &NavigationController::onRoomIsTargetSet);
+    connect(plannerWindow.get(), &PlannerWindow::setBlockedPath,
+          navigationController.get(), &NavigationController::onBlockedPath);
   connect(plannerWindow.get(), &PlannerWindow::setCurrentRoom,
           navigationController.get(), &NavigationController::onRoomIdSet);
 }

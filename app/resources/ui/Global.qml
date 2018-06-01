@@ -21,6 +21,7 @@ QtObject {
 
   property color activePathColor: '#8BC34A'
   property color inactivePathColor: '#404440'
+  property color blockedPathColor: '#D20000'
 
   property var contentIconMapping: {
     'Switch puzzle': 'gauntlet-puzzle',

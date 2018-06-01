@@ -77,9 +77,11 @@ QStringList NavigationData::plannedRouteInsideSection(int section, const QString
     queue.pop();
 
     auto connections = lab->connections[state.currentRoom];
-    for (auto i = connections.constBegin(); i != connections.constEnd(); i++)
+    for (auto i = connections.begin(); i != connections.end(); ++i) {
       if (!i.value().isEmpty() && lab->sections[section].roomIds.contains(i.key())) {
         auto roomId = i.key();
+        if(lab->blockedPaths[state.currentRoom].contains(roomId))
+            continue;
         State newState = state;
         newState.currentRoom = roomId;
         newState.history.append(roomId);
@@ -104,8 +106,20 @@ QStringList NavigationData::plannedRouteInsideSection(int section, const QString
           return newState.history;
         }
 
-        queue.push(newState);
+        if(sectionTargetRooms.contains(roomId))
+          queue.push(newState);
+        else {
+          bool hasTargetConnection = false;
+          for (auto room : sectionTargetRooms) {
+            if(connections[room].size() > 0) {
+              hasTargetConnection = true;
+            }
+          }
+          if(!hasTargetConnection)
+            queue.push(newState);
+        }
       }
+    }
   }
 
   return QStringList();

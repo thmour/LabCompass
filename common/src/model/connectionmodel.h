@@ -14,6 +14,7 @@ struct ConnectionModelData
   QPoint toCoordinate;
   bool isSecretPassage {false};
   bool isPlanned {false};
+  bool isBlocked {false};
 };
 
 class ConnectionModel : public ListModel
@@ -26,16 +27,18 @@ class ConnectionModel : public ListModel
     ToCoordinateRole,
     IsSecretPassgeRole,
     IsPlannedRole,
+    IsBlockedRole,
+    FromRoomRole,
+    ToRoomRole,
   };
 
 public:
   ConnectionModel();
   void loadFromData(const LabyrinthData& data, const NavigationData& navigation);
   void updateFromData(const NavigationData& data);
-
-public:
   int rowCount(const QModelIndex& parent = QModelIndex()) const;
   QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const;
+  Q_INVOKABLE void toggleBlocked(int i);
 
 protected:
   QHash<int, QByteArray> roleNames() const;

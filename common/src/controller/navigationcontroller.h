@@ -20,6 +20,7 @@ public slots:
   void onLabExit();
   void onRoomChanged(const QString& name);
   void onPortalSpawned();
+  void onBlockedPath(QString fromRoom, QString toRoom);
   void onRoomIsTargetSet(const QString& id, bool isTarget);
   void onRoomIdSet(const QString& id);
 };

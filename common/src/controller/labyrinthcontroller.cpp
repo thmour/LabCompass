@@ -5,7 +5,12 @@ LabyrinthController::LabyrinthController(ApplicationModel* model)
   this->model = model;
 }
 
-void LabyrinthController::importFile(const QString& file)
+void LabyrinthController::importID(const QString& id)
 {
-  model->loadFromFile(file);
+  model->loadFromCache(id);
+}
+
+void LabyrinthController::importString(const QString& json)
+{
+  model->loadFromString(json);
 }

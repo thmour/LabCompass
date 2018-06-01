@@ -8,6 +8,7 @@ Rectangle {
 
   signal setRoomIsTarget(string id, bool target)
   signal setCurrentRoom(string id)
+  signal setBlockedPath(string fromRoom, string toRoom)
 
   property var roomModel
   property var connectionModel
@@ -26,12 +27,67 @@ Rectangle {
         var connection = connectionModel.get(i);
 
         ctx.lineWidth = connection.isSecretPassage ? 2 : 4;
-        ctx.strokeStyle = connection.isPlanned ? Global.activePathColor : Global.inactivePathColor;
+        if(connection.isPlanned) {
+            ctx.strokeStyle = Global.activePathColor;
+        } else if (connection.isBlocked) {
+            ctx.strokeStyle = Global.blockedPathColor;
+        } else {
+            ctx.strokeStyle = Global.inactivePathColor;
+        }
 
         ctx.beginPath();
         ctx.moveTo(connection.fromCoordinate.x, connection.fromCoordinate.y);
         ctx.lineTo(connection.toCoordinate.x, connection.toCoordinate.y);
         ctx.stroke();
+      }
+    }
+    MouseArea {
+      id: mouseArea
+      anchors.fill: parent
+      onClicked: {
+        function pDistance(x, y, x1, y1, x2, y2) {
+          var A = x - x1;
+          var B = y - y1;
+          var C = x2 - x1;
+          var D = y2 - y1;
+
+          var dot = A * C + B * D;
+          var len_sq = C * C + D * D;
+          var param = -1;
+          if (len_sq != 0) //in case of 0 length line
+              param = dot / len_sq;
+
+          var xx, yy;
+
+          if (param < 0) {
+            xx = x1;
+            yy = y1;
+          }
+          else if (param > 1) {
+            xx = x2;
+            yy = y2;
+          }
+          else {
+            xx = x1 + param * C;
+            yy = y1 + param * D;
+          }
+
+          var dx = x - xx;
+          var dy = y - yy;
+          return Math.sqrt(dx * dx + dy * dy);
+        }
+        for (var i = 1; i < connectionModel.size() -1; i++) {
+          var connection = connectionModel.get(i);
+          var x1 = connection.fromCoordinate.x;
+          var x2 = connection.toCoordinate.x;
+          var y1 = connection.fromCoordinate.y;
+          var y2 = connection.toCoordinate.y;
+          if(pDistance(mouseX, mouseY, x1, y1, x2, y2) < 5) {
+            connectionModel.toggleBlocked(i);
+            setBlockedPath(connection.fromRoom, connection.toRoom);
+            break;
+          }
+        }
       }
     }
   }
