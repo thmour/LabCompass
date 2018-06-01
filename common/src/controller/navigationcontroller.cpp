@@ -133,34 +133,28 @@ void NavigationController::onPortalSpawned()
 
 bool NavigationController::dfs(const QString& currRoom,
                                const QString& targetRoom,
-                               QHash<QString, bool>& visited,
-                               QString indent = "|") {
+                               QHash<QString, bool>& visited) {
   auto& ld = model->labyrinthData;
   auto& con = ld.connections;
   auto& bp = ld.blockedPaths;
   if (currRoom == targetRoom) {
-    std::cout << currRoom.toStdString() << std::endl;
     return true;
   } else {
     bool found = false;
-
     visited[currRoom] = true;
-    std::cout << currRoom.toStdString() << ':' << std::endl;
     for (auto it = con.begin(); !found && it != con.end(); ++it) {
       auto next_room = it.key();
       if (!visited[next_room]                   &&
           ld.hasConnection(currRoom, next_room) &&
           !bp[currRoom].contains(next_room)) {
-        std::cout << indent.toStdString();
-        found = dfs(next_room, targetRoom, visited, indent + '|');
+        found = dfs(next_room, targetRoom, visited);
       }
     }
-
     return found;
   }
 }
 
-void NavigationController::onBlockedPath(QString fromRoom, QString toRoom)
+void NavigationController::onBlockedPath(QString fromRoom, QString toRoom, int conId)
 {
   if (!model->get_isValid()) {
     return;
@@ -170,6 +164,7 @@ void NavigationController::onBlockedPath(QString fromRoom, QString toRoom)
   if (bp[fromRoom].contains(toRoom)) {
     bp[fromRoom].removeAt(bp[fromRoom].indexOf(toRoom));
     bp[toRoom].removeAt(bp[toRoom].indexOf(fromRoom));
+    model->get_connectionModel()->updateBlocked(conId, false);
   } else {
     QList<QString> rooms = model->labyrinthData.connections.keys();
     QString endRoom = *std::max_element(rooms.begin(), rooms.end(), [](auto a, auto b) {
@@ -177,15 +172,16 @@ void NavigationController::onBlockedPath(QString fromRoom, QString toRoom)
     });
     QHash<QString, bool> visited;
     for(auto& room : rooms) {
-        visited[room] = false;
+      visited[room] = false;
     }
     bp[fromRoom].append(toRoom);
     bp[toRoom].append(fromRoom);
     if (!dfs(fromRoom, endRoom, visited)) {
       bp[fromRoom].removeAt(bp[fromRoom].indexOf(toRoom));
       bp[toRoom].removeAt(bp[toRoom].indexOf(fromRoom));
+    } else {
+      model->get_connectionModel()->updateBlocked(conId, true);
     }
-    std::cout << "done" << std::endl;
   }
 
   if (model->get_inLab()) {

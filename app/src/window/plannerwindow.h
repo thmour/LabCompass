@@ -12,7 +12,7 @@ signals:
   void moved(int x, int y);
   void importID(QString id);
   void importString(QString json);
-  void setBlockedPath(QString fromRoom, QString toRoom);
+  void setBlockedPath(QString fromRoom, QString toRoom, int conId);
   void setRoomIsTarget(QString id, bool target);
   void setCurrentRoom(QString id);
 
