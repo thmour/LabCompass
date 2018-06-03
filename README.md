@@ -10,7 +10,7 @@ Head to the releases [page](https://github.com/thmour/LabCompass/releases)
 
 ## Usage
 
- 1. Drag the `LabCompass` title box to your preference.
+ 1. Drag the `LabCompass` title box to move the widget to your desired position.
  2. Click the arrow button with the notification to load and configure a Labyrinth:
     * Click on any difficulty button to load the layout.
     * Click on the rooms off the main path to use them as a preference.
