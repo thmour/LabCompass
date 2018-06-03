@@ -1,6 +1,6 @@
 # Lab Compass
 
-An overlay widget to help your ass through farming labs (credits to [original creator](https://github.com/yznpku))
+An overlay widget to help you through navigating/farming/carrying labs (credits to [original creator](https://github.com/yznpku))
 
 
 ## Downloads
